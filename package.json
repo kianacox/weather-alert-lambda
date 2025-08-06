@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "build": "node build.js",
     "zip": "zip -j lambda.zip dist/index.js",
     "deploy": "aws lambda update-function-code --function-name getWindData --zip-file fileb://lambda.zip",
@@ -14,7 +16,14 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "esbuild": "^0.25.8"
+    "@types/aws-lambda": "^8.10.152",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.2.0",
+    "aws-sdk-client-mock": "^4.1.0",
+    "esbuild": "^0.25.8",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.859.0"

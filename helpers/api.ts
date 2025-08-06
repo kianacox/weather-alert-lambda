@@ -1,16 +1,17 @@
-const { BASE_URL, CONFIG } = require("../constants");
+import { BASE_URL, CONFIG } from "../constants";
+import { WindData, OpenWeatherResponse } from "../types";
 
-const fetchWindData = async (latitude, longitude) => {
+export const fetchWindData = async (
+  latitude: number,
+  longitude: number
+): Promise<WindData> => {
   const apiKey = CONFIG.api.key;
 
-  if (typeof latitude !== "number" || typeof longitude !== "number") {
-    throw new Error("Latitude and longitude must be numbers");
-  } else if (
-    latitude < -90 ||
-    latitude > 90 ||
-    longitude < -180 ||
-    longitude > 180
-  ) {
+  if (!apiKey) {
+    throw new Error("API key is not configured");
+  }
+
+  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
     throw new Error(
       "Latitude must be between -90 and 90, and longitude must be between -180 and 180"
     );
@@ -23,21 +24,17 @@ const fetchWindData = async (latitude, longitude) => {
     throw new Error(`Error fetching wind data: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data: OpenWeatherResponse = await response.json();
 
   if (!data || !data.wind) {
     throw new Error("Invalid data received from API");
   }
 
-  const windData = {
+  const windData: WindData = {
     windSpeed: data.wind.speed,
     windDirection: data.wind.deg,
     timestamp: data.dt * 1000,
   };
 
   return windData;
-};
-
-module.exports = {
-  fetchWindData,
 };

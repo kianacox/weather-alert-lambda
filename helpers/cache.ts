@@ -1,15 +1,19 @@
-const {
+import {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
-} = require("@aws-sdk/client-s3");
-const { CONFIG } = require("../constants");
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+import { CONFIG } from "../constants";
+import { WindData, CacheEntry } from "../types";
 
 const s3Client = new S3Client({ region: CONFIG.aws.region });
 
 const TTL_MINUTES = 15;
 
-const getCachedData = async (cacheKey) => {
+export const getCachedData = async (
+  cacheKey: string
+): Promise<WindData | null> => {
   const command = new GetObjectCommand({
     Bucket: CONFIG.aws.bucket,
     Key: cacheKey,
@@ -22,7 +26,7 @@ const getCachedData = async (cacheKey) => {
     }
 
     const bodyContents = await response.Body.transformToString();
-    const cachedData = JSON.parse(bodyContents);
+    const cachedData: CacheEntry = JSON.parse(bodyContents);
 
     const now = Date.now();
     const dataAge = now - cachedData.timestamp;
@@ -30,6 +34,12 @@ const getCachedData = async (cacheKey) => {
 
     if (dataAge > ttlMs) {
       console.log(`Cache entry expired. Age: ${dataAge}ms, TTL: ${ttlMs}ms`);
+      await s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: CONFIG.aws.bucket,
+          Key: cacheKey,
+        })
+      );
       return null;
     }
 
@@ -40,8 +50,11 @@ const getCachedData = async (cacheKey) => {
   }
 };
 
-const setCachedData = async (cacheKey, data) => {
-  const cacheEntry = {
+export const setCachedData = async (
+  cacheKey: string,
+  data: WindData
+): Promise<void> => {
+  const cacheEntry: CacheEntry = {
     data: data,
     timestamp: Date.now(),
   };
@@ -58,9 +71,4 @@ const setCachedData = async (cacheKey, data) => {
   } catch (error) {
     console.error(error);
   }
-};
-
-module.exports = {
-  getCachedData,
-  setCachedData,
 };

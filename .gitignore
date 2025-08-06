@@ -2,3 +2,5 @@ node_modules
 dist
 lambda.zip
 package-lock.json
+*.tsbuildinfo
+/coverage
