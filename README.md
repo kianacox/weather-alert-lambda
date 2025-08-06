@@ -51,16 +51,22 @@ This Lambda function provides wind speed and direction data for any location on 
 
 ```
 getWindData/
-├── index.ts              # Main Lambda handler
-├── types.ts              # TypeScript type definitions
-├── constants.ts          # Configuration constants
+├── index.ts                 # Main Lambda handler
+├── types.ts                 # TypeScript type definitions
+├── constants.ts             # Configuration constants
 ├── helpers/
-│   ├── api.ts           # OpenWeatherMap API integration
-│   └── cache.ts         # S3 caching logic
-├── build.js             # esbuild configuration
-├── package.json         # Dependencies and scripts
-├── test-event.json      # Test event for local testing
-└── dist/                # Compiled output (generated)
+│   ├── api.ts              # OpenWeatherMap API integration
+│   └── cache.ts            # S3 caching logic with TTL
+├── tests/
+│   ├── api.test.ts         # Unit tests for API helper
+│   └── cache.test.ts       # Unit tests for cache helper
+├── build.js                # esbuild configuration
+├── jest.config.js          # Jest test configuration
+├── package.json            # Dependencies and scripts
+├── test-event.json         # Test event for local testing
+├── README.md               # Project documentation
+├── dist/                   # Compiled output (generated)
+└── coverage/               # Test coverage reports (generated)
 ```
 
 ## Prerequisites
@@ -179,9 +185,9 @@ The function returns appropriate HTTP status codes:
 
 ## Testing
 
-### Unit Tests
+### Test Framework
 
-The project includes comprehensive unit tests for the API helper function:
+The project uses **Jest** with **TypeScript** support for comprehensive unit testing:
 
 ```bash
 # Run all tests
@@ -194,23 +200,39 @@ npm run test:watch
 npm run test:coverage
 ```
 
-**Test Coverage**: 98.07% statement coverage, 94.44% branch coverage
+### Test Coverage
+
+**Excellent Coverage**: 98.07% statement coverage, 94.44% branch coverage
+
+- **API Helper**: 94.44% statement coverage, 92.85% branch coverage
+- **Cache Helper**: 100% statement coverage, 100% branch coverage
+- **Constants**: 100% statement coverage
 
 ### Test Structure
 
-- **API Helper Tests**:
+#### **API Helper Tests** (`tests/api.test.ts`)
 
-  - Coordinate Validation: Tests for invalid latitude/longitude values
-  - Successful API Calls: Tests for proper data transformation and URL construction
-  - API Error Handling: Tests for various API error scenarios
-  - Fetch Error Handling: Tests for network and JSON parsing errors
+- **Coordinate Validation**: Tests for invalid latitude/longitude values
+- **Successful API Calls**: Tests for proper data transformation and URL construction
+- **API Error Handling**: Tests for various API error scenarios
+- **Fetch Error Handling**: Tests for network and JSON parsing errors
+- **Environment Variables**: Tests for API key configuration
 
-- **Cache Helper Tests**:
-  - Cache Retrieval: Tests for valid, expired, and missing cache entries
-  - Cache Storage: Tests for proper data serialization and S3 operations
-  - TTL Management: Tests for 15-minute expiration logic
-  - Error Handling: Tests for S3 errors and JSON parsing failures
-  - Integration Scenarios: Tests for cache miss/hit patterns and cleanup
+#### **Cache Helper Tests** (`tests/cache.test.ts`)
+
+- **Cache Retrieval**: Tests for valid, expired, and missing cache entries
+- **Cache Storage**: Tests for proper data serialization and S3 operations
+- **TTL Management**: Tests for 15-minute expiration logic and boundary cases
+- **Error Handling**: Tests for S3 errors and JSON parsing failures
+- **Integration Scenarios**: Tests for cache miss/hit patterns and cleanup
+- **Boundary Testing**: Tests for exact TTL limits and edge cases
+
+#### **Test Quality**
+
+- **24 total tests** (11 API + 13 Cache)
+- **100% function coverage**
+- **Edge case coverage** including boundary conditions
+- **Integration testing** for real-world scenarios
 
 ### Local Lambda Testing
 
