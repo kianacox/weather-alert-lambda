@@ -1,0 +1,22 @@
+{
+  "name": "getwinddata",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js",
+    "zip": "zip -j lambda.zip dist/index.js",
+    "deploy": "aws lambda update-function-code --function-name getWindData --zip-file fileb://lambda.zip",
+    "lambda": "npm run build && npm run zip && npm run deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "esbuild": "^0.25.8"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.859.0"
+  }
+}
