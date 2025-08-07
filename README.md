@@ -137,13 +137,13 @@ npm run deploy
 ### Request Format
 
 ```
-GET /?lat={latitude}&lon={longitude}
+GET getWindData/?lat={latitude}&lon={longitude}
 ```
 
 ### Example Request
 
 ```bash
-curl "https://your-api-gateway-url/?lat=40.7128&lon=-74.0060"
+curl "https://your-api-gateway-url/route?lat=40.7128&lon=-74.0060"
 ```
 
 ### Response Format
